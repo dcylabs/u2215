@@ -1,0 +1,27 @@
+version: "3.3"
+
+services:
+
+  frontend:
+    build: ./images/frontend
+    container_name: "athack_frontend"
+    environment:
+      - "ATHACK_DEFAULT=https://dcylabs.gitlab.io/u2215"
+      - "ATHACK_HANDLE=http://handler:9999/handle"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.athack_frontend.rule=Host(`u2215.zip`)"
+      - "traefik.http.routers.athack_frontend.entrypoints=websecure"
+      - "traefik.http.routers.athack_frontend.tls.certresolver=myresolver"
+      - "traefik.http.routers.athack_frontend_unsecure.rule=Host(`u2215.zip`)"
+      - "traefik.http.routers.athack_frontend_unsecure.entrypoints=web"
+      - "traefik.http.services.athack_frontend.loadbalancer.server.port=80"
+
+  handler:
+    build: ./images/handler
+    container_name: "athack_handler"
+
+networks: 
+  default: 
+    external: true 
+    name: traefik 
